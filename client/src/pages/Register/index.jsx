@@ -1,23 +1,41 @@
 import { Button, Form, Input, message } from 'antd'
-import { Link } from 'react-router-dom'
-import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
 import { RegisterUser } from '../../apicalls/users'
+import { useDispatch } from 'react-redux'
+import { SetLoader } from '../../redux/loadersSlice'
 
 const Register = () => {
-  
-  const onFinish = async(values) => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+
+  const onFinish = async (values) => {
     try {
+      dispatch(SetLoader(true));
       const response = await RegisterUser(values);
-      if(response.success){
+      dispatch(SetLoader(false));
+      if (response.success) {
         message.success(response.message)
-      }else{
+        navigate("/login")
+      } else {
         throw new Error(response.message);
       }
 
     } catch (error) {
-        message.error(error.message);
+      dispatch(SetLoader(false));
+
+      message.error(error.message);
     }
   }
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/")
+    }
+  }, [])
+
   return (
     <div className='h-screen bg-primary flex justify-center items-center'>
       <div className="bg-white p-5 w-[500px]">

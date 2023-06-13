@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/userModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 // new registration
 router.post("/register", async (req, res) => {
@@ -98,9 +99,14 @@ router.post("/login", async (req, res) => {
 
 // get-current-user endpoint
 
-router.post("/get-current-user" ,async(req,res)=>{
+router.post("/get-current-user", authMiddleware ,async(req,res)=>{
     try {
-        
+        const user = await User.findById(req.body.userId);
+        res.send({
+            success : true,
+            message : "User Fetched Successfully",
+            data : user,
+        })
     } catch (error) {
         res.send({
             success: false,

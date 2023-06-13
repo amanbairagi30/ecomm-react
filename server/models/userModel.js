@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePic : {
         type : String,
-        default : ""
+        default : "https://img.icons8.com/?size=512&id=18738&format=png"
     },
 
 },{

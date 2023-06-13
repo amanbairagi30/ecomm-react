@@ -1,24 +1,42 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Form, Input, message } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {LoginUser} from "../../apicalls/users"
+import { useDispatch } from 'react-redux'
+import { SetLoader } from '../../redux/loadersSlice'
 
 const Login = () => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const onFinish = async (values) => {
     try {
+      dispatch(SetLoader(true));
       const response = await LoginUser(values);
+      dispatch(SetLoader(false));
+      
       if (response.success) {
         message.success(response.message)
         localStorage.setItem("token", response.data);
+        navigate("/")
       } else {
         throw new Error(response.message);
       }
 
     } catch (error) {
+      dispatch(SetLoader(false));
       console.log(error)
       message.error(error.message);
     }
   }
+
+  useEffect(()=>{
+    if(localStorage.getItem("token")){
+      navigate("/")
+    }
+  },[])
+
   return (
     <div>
       <div className='h-screen bg-primary flex justify-center items-center'>
