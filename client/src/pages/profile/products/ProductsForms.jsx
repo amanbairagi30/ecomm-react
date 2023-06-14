@@ -3,7 +3,8 @@ import TextArea from 'antd/es/input/TextArea'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from "react-redux"
 import { SetLoader } from '../../../redux/loadersSlice'
-import { AddProduct } from '../../../apicalls/products'
+import { AddProduct, EditProduct } from '../../../apicalls/products'
+import Images from './Images'
 
 
 const additionalThings = [
@@ -33,12 +34,9 @@ const rules = [
 ]
 
 
-const ProductsForms = ({
-  showProductForm,
-  setShowProductForm,
-  selectedProduct
-}) => {
+const ProductsForms = ({showProductForm,setShowProductForm,selectedProduct,getData}) => {
 
+  const [selectedTab="1" , setSelectedTab] = React.useState("1");
   const formRef = React.useRef(null);
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.users);
@@ -46,13 +44,24 @@ const ProductsForms = ({
 
   const onFinish = async (values) => {
     try {
-      values.seller = user._id;
-      values.status = 'pending';
+
       dispatch(SetLoader(true));
-      const response = await AddProduct(values);
+
+      let response = null;
+
+      if (selectedProduct) {
+        response = await EditProduct(selectedProduct._id, values);
+      } else {
+        values.seller = user._id;
+        values.status = 'pending';
+        response = await AddProduct(values);  //we need to specify the response vvariable otherwise it wont work
+
+      }
+
       dispatch(SetLoader(false));
       if (response.success) {
         message.success(response.message);
+        getData();
         setShowProductForm(false);
       }
       else {
@@ -78,16 +87,21 @@ const ProductsForms = ({
       onCancel={() => setShowProductForm(false)}
       centered
       width={1000}
-      okText="Add Product"
+      okText={`${selectedProduct ? "Save Changes" : "Add Product"}`}
       onOk={() => {
         formRef.current.submit();
       }}
+
+      {...(selectedTab === "2" && {footer : false})}
     >
       <div>
-        <text-xl className="text-primary">
+        <h1 className="text-primary">
           {selectedProduct ? "Edit Product" : "Add Product"}
-        </text-xl>  
-        <Tabs defaultActiveKey='1'>
+        </h1>
+        <Tabs defaultActiveKey='1'
+          activeKey={selectedTab}
+          onChange={(key) => setSelectedTab(key)}
+        >
 
           <Tabs.TabPane tab="General" key="1">
             <Form
@@ -130,7 +144,9 @@ const ProductsForms = ({
               <div className="flex gap-10">
                 {additionalThings.map((item) => {
                   return (
-                    <Form.Item label={item.label} name={item.name}>
+                    <Form.Item label={item.label} name={item.name}
+                      valuePropName='checked'
+                    >
                       <Input
                         type='checkbox'
                         value={item.name}
@@ -147,8 +163,11 @@ const ProductsForms = ({
               </div>
             </Form>
           </Tabs.TabPane>
-          <Tabs.TabPane tab="Image" key="2">
-            <h1>Image</h1>
+          <Tabs.TabPane tab="Image" key="2" disabled={!selectedProduct}>
+              <Images selectedProduct = {selectedProduct}
+                getData = {getData}
+                setShowProductForm = {setShowProductForm}
+              />
           </Tabs.TabPane>
         </Tabs>
       </div>
