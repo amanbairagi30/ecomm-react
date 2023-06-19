@@ -65,6 +65,11 @@ router.post("/login", async (req, res) => {
             // })
         }
 
+        // if user is active 
+        if(user.status != "active"){
+            throw new Error("This User account is blocked , Please Contact at admin456@gmail.com")
+        }
+
         // compare password
 
             
@@ -114,5 +119,41 @@ router.post("/get-current-user", authMiddleware ,async(req,res)=>{
         })
     }
 })
+
+
+// get all users
+
+router.get("/get-all-users" ,authMiddleware , async(req,res)=>{
+    try {
+        const users = await User.find();
+        res.send({
+            success : true,
+            message : "User Data Fetched Successfully",
+            data : users,
+        })
+    } catch (error) {
+        res.send({
+            success : false,
+            message : error.message
+        })
+    }
+})
+
+// update user status
+router.put("/update-user-status/:id" ,authMiddleware , async(req,res)=>{
+    try {
+        await User.findByIdAndUpdate(req.params.id , req.body);
+        res.send({
+            success : true,
+            message : "User Status Updated Successfully",
+        })
+    } catch (error) {
+        res.send({
+            success : false,
+            message : error.message
+        })
+    }
+})
+
 
 module.exports = router;

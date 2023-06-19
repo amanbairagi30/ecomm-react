@@ -12,9 +12,9 @@ export const AddProduct = async(payload) =>{
 }
 
 // Get products
-export const GetProducts = async() =>{
+export const GetProducts = async(filters) =>{
     try {
-        const response = await axiosInstance.post("/api/products/get-products");
+        const response = await axiosInstance.post("/api/products/get-products" , filters);
         return response.data;
     } catch (error) {
         return error.message;
@@ -31,11 +31,46 @@ export const EditProduct = async(id,payload) =>{
     }
 }
 
+// Get product ny ID
+export const GetProductByID = async(id)=>{
+    try {
+        const response = await axiosInstance.get(`/api/products/get-product-by-id/${id}`)
+        return response.data;
+    } catch (error) {
+        return error.message;
+    }
+
+}
+
 // delete product
 export const DeleteProduct = async(id) =>{
     try {
         const response = await axiosInstance.delete(`/api/products/delete-product/${id}`);
         return response.data;
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+// Upload Product Image
+export const UploadProductImage = async(payload) =>{
+    try {
+        const response = await axiosInstance.post("/api/products//upload-image-to-product",payload);
+        return response.data;
+        
+    } catch (error) {
+        return error.message;
+    }
+}
+
+
+// update product status at admin
+
+export const UpdateProductStatus = async(id , status) =>{
+    try {
+        const response = await axiosInstance.put(`/api/products/update-product-status/${id}` , { status });
+        return response.data
     } catch (error) {
         return error.message;
     }

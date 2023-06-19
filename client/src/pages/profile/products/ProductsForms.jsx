@@ -34,9 +34,9 @@ const rules = [
 ]
 
 
-const ProductsForms = ({showProductForm,setShowProductForm,selectedProduct,getData}) => {
+const ProductsForms = ({ showProductForm, setShowProductForm, selectedProduct, getData }) => {
 
-  const [selectedTab="1" , setSelectedTab] = React.useState("1");
+  const [selectedTab = "1", setSelectedTab] = React.useState("1");
   const formRef = React.useRef(null);
   const dispatch = useDispatch();
   const { user } = useSelector(state => state.users);
@@ -92,7 +92,7 @@ const ProductsForms = ({showProductForm,setShowProductForm,selectedProduct,getDa
         formRef.current.submit();
       }}
 
-      {...(selectedTab === "2" && {footer : false})}
+      {...(selectedTab === "2" && { footer: false })}
     >
       <div>
         <h1 className="text-primary">
@@ -127,6 +127,7 @@ const ProductsForms = ({showProductForm,setShowProductForm,selectedProduct,getDa
                     <select>
                       <option value=" ">Select</option>
                       <option value="electronics">Electronics</option>
+                      <option value="academics">Academics</option>
                       <option value="fashion">Fashion</option>
                       <option value="home">Home</option>
                       <option value="sports">Sport</option>
@@ -164,10 +165,13 @@ const ProductsForms = ({showProductForm,setShowProductForm,selectedProduct,getDa
             </Form>
           </Tabs.TabPane>
           <Tabs.TabPane tab="Image" key="2" disabled={!selectedProduct}>
-              <Images selectedProduct = {selectedProduct}
-                getData = {getData}
-                setShowProductForm = {setShowProductForm}
+            {selectedProduct && (
+              <Images
+                selectedProduct={selectedProduct}
+                getData={getData}
+                setShowProductForm={setShowProductForm}
               />
+            )}
           </Tabs.TabPane>
         </Tabs>
       </div>

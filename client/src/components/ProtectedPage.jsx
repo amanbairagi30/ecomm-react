@@ -54,11 +54,18 @@ const ProtectedPage = ({ children }) => {
 
                 {/* header */}
                 <div className='flex justify-between items-center bg-primary p-5'>
-                    <h1 className='text-white'>Ecomm</h1>
+                    <h1 className='text-white cursor-pointer' onClick={()=>{navigate("/")}}>Ecomm</h1>
                     <div className='bg-white rounded-md py-2 px-5 flex items-center gap-8'>
                         <div className='flex items-center'>
                             <img className='w-8' src={user.profilePic} alt="" />
-                            <span className='underline cursor-pointer' onClick={()=>navigate("/profile")}>{user?.name}</span>
+                            <span className='underline cursor-pointer' onClick={()=>{
+                                if(user.role === "user"){
+                                    navigate("/profile");
+                                }
+                                else{
+                                    navigate("/admin");
+                                }
+                            }}>{user?.name}</span>
                         </div>
                         <i className="text-md ri-logout-box-r-line cursor-pointer"
                             onClick={()=>{
