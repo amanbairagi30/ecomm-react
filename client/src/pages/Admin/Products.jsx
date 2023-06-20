@@ -2,14 +2,19 @@ import { Button, Table, message } from 'antd'
 import React, { useEffect } from 'react'
 import ProductsForms from '../profile/products/ProductsForms';
 import moment from "moment"
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SetLoader } from '../../redux/loadersSlice';
-import { DeleteProduct, GetProducts, UpdateProductStatus } from '../../apicalls/products';
+import { DeleteProduct, GetProductByID, GetProducts, UpdateProductStatus } from '../../apicalls/products';
+import { AddNotifications } from '../../apicalls/notifications';
 
 
 const Products = () => {
     const [selectedProduct, setSelectedProduct] = React.useState(null);
+    // const {user} = useSelector((state)=>state.users);
     const [products, setProducts] = React.useState([]);
+
+    // below usestate is for single product
+    // const [product, setProduct] = React.useState(null);
     const [showProductForm, setShowProductForm] = React.useState(false);
     // const { user } = useSelector((state) => state.users);
     const dispatch = useDispatch();
@@ -18,11 +23,26 @@ const Products = () => {
         try {
             dispatch(SetLoader(true));
             const response = await UpdateProductStatus(id,status);
+            // const response2 = await GetProductByID(id);
+            const product = products.find((p) => p._id === id);
+
+
             dispatch(SetLoader(false));
             
             if(response.success){
-                message.success(response.message);
+                // adding notifications
+                message.info("Before addnotifications ")
+                await AddNotifications({
+                    title : "Uploaded Product Status ", 
+                    message : (status === "approved" ? "Congratulations " : "Unfortunately ") + "Your product has been " + status + (status === "approved" ? " , You can check your products live on website " : ", Please contact Admin ") , 
+                    onClick : "/profile",
+                    user : product.seller._id,
+                    read : false,
+                })
+                message.info("After addnotifications ")
                 getData();
+                message.success(response.message);
+                // setProduct(response2.data);
             }
             else{
                 throw new Error(response.message);
@@ -66,6 +86,18 @@ const Products = () => {
 
     const columns = [
         {
+            title: "Image",
+            dataIndex: "image",
+            render : (text,record)=>{
+                return (
+                    <img loading='lazy' src={record?.images?.length > 0 ? record.images[0] : ""} 
+                    alt=""
+                    className='w-20 h-20 object-cover rounded-md'
+                    />
+                )
+            }
+        },
+        {
             title: "Products",
             dataIndex: "name",
         },
@@ -76,10 +108,7 @@ const Products = () => {
                 return record.seller.name
             },
         },
-        {
-            title: "Description",
-            dataIndex: "description",
-        },
+       
         {
             title: "Price",
             dataIndex: "price",
@@ -175,13 +204,19 @@ const Products = () => {
         }
     ];
 
+
     useEffect(() => {
         getData();
     }, [])
 
     return (
         <div>
-            <div className="flex justify-end mb-4">
+            <div className="flex justify-end gap-4 mb-4">
+            <div className='flex p-2  border border-solid items-center justify-center cursor-pointer'
+                    onClick={()=>{window.location.reload();}}
+                >
+                    Reload
+                </div>
                 <Button
                     type='default'
                     onClick={() => {

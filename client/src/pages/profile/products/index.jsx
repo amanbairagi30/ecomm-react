@@ -47,12 +47,20 @@ const Products = () => {
 
     const columns = [
         {
-            title: "Name",
-            dataIndex: "name",
+            title: "Image",
+            dataIndex: "image",
+            render : (text,record)=>{
+                return (
+                    <img src={record?.images?.length > 0 ? record.images[0] : ""} 
+                    alt=""
+                    className='w-20 h-20 object-cover rounded-md'
+                    />
+                )
+            }
         },
         {
-            title: "Description",
-            dataIndex: "description",
+            title: "Name",
+            dataIndex: "name",
         },
         {
             title: "Price",
@@ -104,7 +112,13 @@ const Products = () => {
 
     return (
         <div>
-            <div className="flex justify-end mb-4">
+            <div className="flex gap-4 justify-end mb-4">
+
+                <div className='flex p-2  border border-solid items-center justify-center cursor-pointer'
+                    onClick={()=>{window.location.reload();}}
+                >
+                    Reload
+                </div>
                 <Button
                     type='default'
                     onClick={() => {

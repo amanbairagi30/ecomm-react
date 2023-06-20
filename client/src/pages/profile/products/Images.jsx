@@ -71,7 +71,7 @@ const Images = ({ selectedProduct, setShowProductForm, getData }) => {
 
                 {images.map((image) => {
                     return <div className='flex gap-2 border border-solid  border-gray-200 p-3 items-end    '>
-                        <img className='h-20 w-20 object-cover ' src={image} alt="" />
+                        <img className='h-20 w-20 object-cover ' loading='lazy' src={image} alt="" />
                         <i className='ri-delete-bin-line cursor-pointer text-xl hover:text-red-500'
                             onClick={() => deleteImage(image)}
                         ></i>
@@ -86,6 +86,7 @@ const Images = ({ selectedProduct, setShowProductForm, getData }) => {
                     setFile(info.file)
                     setShowPreview(true);
                 }}
+                fileList={file ? [file] : []}
                 showUploadList={showPreview}
             >
 

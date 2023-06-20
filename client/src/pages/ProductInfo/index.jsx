@@ -16,6 +16,7 @@ const ProductInfo = () => {
     const [product, setProduct] = React.useState(null)
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const {user} = useSelector((state)=>state.users);
     const { id } = useParams();
 
     const getData = async () => {
@@ -136,7 +137,8 @@ const ProductInfo = () => {
 
                         <div className="flex justify-between mt-0">
                             <span>Name</span>
-                            <span>{product.seller.name}</span>
+                            {product.seller._id === user._id ? <span>You</span> : <span>{product.seller.name}</span>}
+                            
                         </div>
 
                         <div className="flex justify-between mt-0">

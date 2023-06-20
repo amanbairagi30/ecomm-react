@@ -25,6 +25,40 @@ router.post("/add-product" , authMiddleware , async(req,res)=>{
     }
 })
 
+// add product and send notification to admin
+// router.post("/add-product" , authMiddleware , async(req,res)=>{
+//     try {
+        
+//         const newProduct = new Product(req.body)
+//         await newProduct.save();
+
+//         //send notifications to admin
+
+//         const admins = await User.find({role : "admin"});
+//         admins.forEach(async(admin)=>{
+//             const newNotification = new Notification({
+//                 user : admin._id,
+//                 message : "New Product has been added by " + req.user.name,
+//                 title : "New Product",
+//                 onClick : "/admin",
+//                 read : false,
+//             })
+//             await newNotification.save();
+//         })
+
+//         res.send({
+//             success : true,
+//             message : "Product Added Sucessfully"
+//         })
+
+//     } catch (error) {
+//         res.send({
+//             success: false,
+//             message : error.message
+//         })
+//     }
+// })
+
 //get all products
 
 router.post("/get-products" , authMiddleware , async(req,res)=>{
